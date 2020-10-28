@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+numpy = "*"
+networkx = "*"
+matplotlib = "*"
+scipy = "*"
+joblib = "*"
+
+[requires]
+python_version = "3.8"
