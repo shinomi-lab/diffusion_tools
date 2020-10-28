@@ -97,15 +97,23 @@ def diffuse_with_dq(n, adj, dq_vec, source, gen):
     return diffuse(adj, sender_vec, s0), sender_vec, theta_vec
 
 
-def sim(n, adj, dq_vec, source, seed, t):
-    sq = nrd.SeedSequence(seed)
-    gen = nrd.Generator(nrd.PCG64(sq))
+def independent_cascade(g, I0, ep_map, seed):
+    G = g if g.is_directed() else g.to_directed()
 
-    # dq_vec = mapping(score, dq)
-    ts = []
-    for i in range(t):
-        ts.append(diffuse_with_dq(n, adj, dq_vec, source, gen))
-        if (i + 1) % 10 == 0: print(".", end="")
-        if (i + 1) % 1000 == 0: print("")
+    gen = nrd.Generator(nrd.PCG64(nrd.SeedSequence(seed)))
 
-    return ts
+    I = I0
+    S = I.copy()
+
+    ss = [(I, S)]
+    while len(I) > 0:
+        J = set()
+        for i in I:
+            for j in G.successors(i):
+                if ep_map[(i, j)] > gen.random():
+                    J.add(j)
+        I = J
+        S = S | I
+        ss.append((I, S))
+
+    return ss
