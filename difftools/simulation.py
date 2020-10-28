@@ -6,57 +6,65 @@ from joblib import Parallel, delayed
 from joblib import parallel_backend
 
 
-def final_states(rs):
-    return np.stack(list(map(lambda r: r[-1], rs)))
+def iterate(f, t, *args):
+    ts = []
+    for i in range(t):
+        ts.append(f(*args))
+        if (i + 1) % 10 == 0: print(".", end="")
+        if (i + 1) % 1000 == 0: print("")
+
+    return ts
 
 
-def traverse_all_pattern(n, adj, k, i):
-    rs = []
+def iterate_parallel(f, t, *args):
+    with parallel_backend('multiprocessing'):
+        ts = Parallel(n_jobs=-1)(delayed(f)(*args) for j in range(t))
+
+    return ts
+
+
+def fold_all_pattern(n, adj, k, i):
     s0 = diff.single_source(n, i)
-    for j, s in enumerate(comb.comb_binary_with_index(n, k, i)):
-        if (j + 1) % 10 == 0: print(".", end="")
-        if (j + 1) % 1000 == 0: print()
-        rs.append(diff.diffuse(adj, s, s0))
+
+    with parallel_backend('multiprocessing'):
+        rs = Parallel(n_jobs=-1)(
+            delayed(diff.diffuse)(adj, s, s0)
+            for (num, s) in comb.comb_binary_with_index(n, k, i))
 
     return rs
 
 
-def __rbswi_bstn(n, k, i, gen):
-    s = comb.random_bit_seq_with_index(n, k, i, gen)
-    num = comb.bit_seq_to_num(s)
-    return num, s
-
-
-def random_search(n, adj, k, i, min_rep, rate, seed):
-    ts = []
-
-    gen = diff.get_gen(seed)
-
-    comb = sp.special.comb(n - 1, k - 1, True)
+def fold_random_pattern(n, adj, k, i, rate, gen):
     repeat = int(comb * rate)
-
     s0 = diff.single_source(n, i)
 
+    with parallel_backend('multiprocessing'):
+        ss = Parallel(n_jobs=-1)(
+            delayed(comb.random_bit_seq_with_index)(n, k, i, gen)
+            for _ in range(repeat))
+
+    with parallel_backend('multiprocessing'):
+        ns = Parallel(n_jobs=-1)(delayed(comb.bit_seq_to_num)(s) for s in ss)
+
+    mem = {}
+    for num, s in zip(ns, ss):
+        mem[num] = s
+
+    with parallel_backend('multiprocessing'):
+        rs = Parallel(n_jobs=-1)(delayed(diff.diffuse)(adj, s, s0)
+                                 for s in mem.values())
+
+    return rs
+
+
+def search_with_approx(n, adj, k, i, min_rep, rate, seed):
+    comb = sp.special.comb(n - 1, k - 1, True)
+
     if comb <= min_rep:
-        with parallel_backend('multiprocessing'):
-            ts = Parallel(n_jobs=-1)(
-                delayed(diff.diffuse)(adj, s, s0)
-                for (num, s) in comb.comb_binary_with_index(n, k, i))
+        return fold_all_pattern(n, adj, k, i)
     else:
-        with parallel_backend('multiprocessing'):
-            ns = Parallel(n_jobs=-1)(delayed(__rbswi_bstn)(n, k, i, gen)
-                                     for j in range(repeat))
-
-        mem = {}
-        for num, s in ns:
-            mem[num] = s
-
-        with parallel_backend('multiprocessing'):
-            ts = Parallel(n_jobs=-1)(delayed(diff.diffuse)(adj, s, s0)
-                                     for s in mem.values())
-
-        print(len(ts) / comb)
-    return ts
+        gen = diff.get_gen(seed)
+        return fold_random_pattern(n, adj, k, i, rate, gen)
 
 
 def scoring(n, ss, data, i):

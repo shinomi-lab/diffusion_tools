@@ -39,7 +39,7 @@ def bit_seq_to_num(seq):
     return ((1 << np.arange(n)) * seq).sum().item()
 
 
-def __insert_bit(k, n, i):
+def insert_bit(k, n, i):
     s = 1 << i
     r = k % s
     m = ((k - r) << 1) + s + r
@@ -55,7 +55,7 @@ def comb_binary_with_index(n, r, i):
     ks = comb_binary(n - 1, r - 1)
 
     with parallel_backend('multiprocessing'):
-        ts = Parallel(n_jobs=-1)(delayed(__insert_bit)(k, n, i) for k in ks)
+        ts = Parallel(n_jobs=-1)(delayed(insert_bit)(k, n, i) for k in ks)
 
     return ts
 
