@@ -1,8 +1,10 @@
+from typing import Tuple, Any, Set, List
 import numpy as np
 import math
 import networkx as nx
 import numpy.random as nrd
 
+NDArray = Any
 
 def get_gen(seed):
     sq = nrd.SeedSequence(seed)
@@ -27,7 +29,7 @@ def normal_information_potential(p0, p1, i) -> float:
         else:
             return p * p * math.log(p)
 
-    def v(p) -> float:
+    def v(p: Tuple[Any, Any]) -> float:
         p0 = p[0]
         p1 = p[1]
 
@@ -38,7 +40,7 @@ def normal_information_potential(p0, p1, i) -> float:
         else:
             return (f(p1) - f(p0)) / (p1 - p0)
 
-    return dt * (1 - sum(map(v, zip(p0, p1))))
+    return dt * (1.0 - sum(map(v, zip(p0, p1))))
 
 
 def potentials(p0, p1, i):
@@ -61,34 +63,28 @@ def mapping(score, patterns):
     return ret
 
 
-def dictToVec(dict, n, dtype):
-    return np.fromiter(map(lambda i: dict[i], range(n)), dtype)
-
-
 def single_source(n, i):
     v = np.zeros(n, bool)
     v[i] = True
     return v
 
 
-def diffuse(adj, sender_vec, s0):
+def diffuse(adj, sender_vec, s0) -> List[Tuple[NDArray, NDArray]]:
     adjd = adj * sender_vec
 
-    s = [s0]
-    t = [s0]
+    rs = [(s0, s0)]
     cs = s0
     ct = s0
 
     while (not all(cs == 0)):
         cs = (np.matmul(adjd, cs) > 0) & (~ct)
-        s.append(cs)
         ct = cs + ct
-        t.append(ct)
+        rs.append((cs, ct))
 
-    return t
+    return rs
 
 
-def diffuse_with_dq(n, adj, dq_vec, source, gen):
+def diffuse_with_dq(n, adj, dq_vec, source, gen) -> Tuple[List[Tuple[NDArray, NDArray]], NDArray, NDArray]:
     s0 = single_source(n, source)
     theta_vec = np.asarray(gen.random(n))  # thresholds(size, gen)
     sender_vec = dq_vec > theta_vec
@@ -97,7 +93,7 @@ def diffuse_with_dq(n, adj, dq_vec, source, gen):
     return diffuse(adj, sender_vec, s0), sender_vec, theta_vec
 
 
-def independent_cascade(g, I0, ep_map, seed):
+def independent_cascade(g, I0, ep_map, seed) -> List[Tuple[Set[int], Set[int]]]:
     G = g if g.is_directed() else g.to_directed()
 
     gen = nrd.Generator(nrd.PCG64(nrd.SeedSequence(seed)))
@@ -110,6 +106,7 @@ def independent_cascade(g, I0, ep_map, seed):
         J = set()
         for i in I:
             for j in G.successors(i):
+                if j in S: continue
                 if ep_map[(i, j)] > gen.random():
                     J.add(j)
         I = J

@@ -1,3 +1,4 @@
+from typing import Tuple, Any, Set, List
 import numpy as np
 import scipy as sp
 import difftools.diffusion as diff
@@ -23,18 +24,18 @@ def iterate_parallel(f, t, *args):
     return ts
 
 
-def fold_all_pattern(n, adj, k, i):
+def fold_all_pattern(n, adj, k, i) -> List[Tuple[Any, Any]]:
     s0 = diff.single_source(n, i)
 
     with parallel_backend('multiprocessing'):
-        rs = Parallel(n_jobs=-1)(
+        rs: List[Tuple[Any, Any]] = Parallel(n_jobs=-1)(
             delayed(diff.diffuse)(adj, s, s0)
             for (num, s) in comb.comb_binary_with_index(n, k, i))
 
     return rs
 
 
-def fold_random_pattern(n, adj, k, i, rate, gen):
+def fold_random_pattern(n, adj, k, i, rate, gen) -> List[Tuple[Any, Any]]:
     repeat = int(comb * rate)
     s0 = diff.single_source(n, i)
 
@@ -57,7 +58,7 @@ def fold_random_pattern(n, adj, k, i, rate, gen):
     return rs
 
 
-def search_with_approx(n, adj, k, i, min_rep, rate, seed):
+def search_with_approx(n, adj, k, i, min_rep, rate, seed) -> List[Tuple[Any, Any]]:
     comb = sp.special.comb(n - 1, k - 1, True)
 
     if comb <= min_rep:
