@@ -35,8 +35,7 @@ def fold_all_pattern(n, adj, k, i) -> List[Tuple[Any, Any]]:
     return rs
 
 
-def fold_random_pattern(n, adj, k, i, rate, gen) -> List[Tuple[Any, Any]]:
-    repeat = int(comb * rate)
+def fold_random_pattern(n, adj, k, i, repeat, gen) -> List[Tuple[Any, Any]]:
     s0 = diff.single_source(n, i)
 
     with parallel_backend('multiprocessing'):
@@ -59,13 +58,14 @@ def fold_random_pattern(n, adj, k, i, rate, gen) -> List[Tuple[Any, Any]]:
 
 
 def search_with_approx(n, adj, k, i, min_rep, rate, seed) -> List[Tuple[Any, Any]]:
-    comb = sp.special.comb(n - 1, k - 1, True)
+    comb_count = sp.special.comb(n - 1, k - 1, True)
 
-    if comb <= min_rep:
+    if comb_count <= min_rep:
         return fold_all_pattern(n, adj, k, i)
     else:
+        repeat = int(comb_count * rate)
         gen = diff.get_gen(seed)
-        return fold_random_pattern(n, adj, k, i, rate, gen)
+        return fold_random_pattern(n, adj, k, i, repeat, gen)
 
 
 def scoring(n, ss, data, i):
