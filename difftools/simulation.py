@@ -24,18 +24,18 @@ def iterate_parallel(f, t, *args):
     return ts
 
 
-def fold_all_pattern(n, adj, k, i) -> List[Tuple[Any, Any]]:
+def fold_all_pattern(n, adj, k, i) -> List[List[Tuple[Any, Any]]]:
     s0 = diff.single_source(n, i)
 
     with parallel_backend('multiprocessing'):
-        rs: List[Tuple[Any, Any]] = Parallel(n_jobs=-1)(
+        rs = Parallel(n_jobs=-1)(
             delayed(diff.diffuse)(adj, s, s0)
             for (num, s) in comb.comb_binary_with_index(n, k, i))
 
     return rs
 
 
-def fold_random_pattern(n, adj, k, i, repeat, gen) -> List[Tuple[Any, Any]]:
+def fold_random_pattern(n, adj, k, i, repeat, gen) -> List[List[Tuple[Any, Any]]]:
     s0 = diff.single_source(n, i)
 
     with parallel_backend('multiprocessing'):
@@ -57,7 +57,7 @@ def fold_random_pattern(n, adj, k, i, repeat, gen) -> List[Tuple[Any, Any]]:
     return rs
 
 
-def search_with_approx(n, adj, k, i, min_rep, rate, seed) -> List[Tuple[Any, Any]]:
+def search_with_approx(n, adj, k, i, min_rep, rate, seed) -> List[List[Tuple[Any, Any]]]:
     comb_count = sp.special.comb(n - 1, k - 1, True)
 
     if comb_count <= min_rep:
