@@ -100,9 +100,21 @@ def diffuse_with_dq(n, adj, dq_vec, source, gen) -> Tuple[List[Tuple[NDArray, ND
 
 
 def independent_cascade(g, I0, ep_map, seed) -> List[Tuple[Set[int], Set[int]]]:
+    """
+    Parameters
+    ----------
+    g : networkx graph
+    I0 : seed node set
+    ep_map : propagation probability map
+    gen : numpy random generator
+
+    Returns
+    -------
+    The history of tuple of active node set and activated node set
+    """
     G = g if g.is_directed() else g.to_directed()
 
-    gen = nrd.Generator(nrd.PCG64(nrd.SeedSequence(seed)))
+    # gen = nrd.Generator(nrd.PCG64(nrd.SeedSequence(seed)))
 
     I = I0
     S = I.copy()
