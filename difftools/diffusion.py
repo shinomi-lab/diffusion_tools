@@ -6,6 +6,7 @@ import numpy.random as nrd
 
 NDArray = Any
 
+
 def get_gen(seed):
     sq = nrd.SeedSequence(seed)
     return nrd.Generator(nrd.PCG64(sq))
@@ -22,10 +23,12 @@ def information_entropy(p) -> float:
 def normal_information_potential(p0, p1, i) -> float:
     dt = np.inner(p1 - p0, i)
 
-    if dt == 0: return 0
+    if dt == 0:
+        return 0
 
     def f(p: float) -> float:
-        if p == 0 or p == 1: return 0
+        if p == 0 or p == 1:
+            return 0
         else:
             return p * p * math.log(p)
 
@@ -34,9 +37,12 @@ def normal_information_potential(p0, p1, i) -> float:
         p1 = p[1]
 
         if p0 == p1:
-            if p0 == 0: return 0
-            elif p0 == 1: return 1
-            else: return p0 * (1 + 2 * math.log(p0))
+            if p0 == 0:
+                return 0
+            elif p0 == 1:
+                return 1
+            else:
+                return p0 * (1 + 2 * math.log(p0))
         else:
             return (f(p1) - f(p0)) / (p1 - p0)
 
@@ -106,7 +112,8 @@ def independent_cascade(g, I0, ep_map, seed) -> List[Tuple[Set[int], Set[int]]]:
         J = set()
         for i in I:
             for j in G.successors(i):
-                if j in S: continue
+                if j in S:
+                    continue
                 if ep_map[(i, j)] > gen.random():
                     J.add(j)
         I = J
