@@ -99,7 +99,7 @@ def diffuse_with_dq(n, adj, dq_vec, source, gen) -> Tuple[List[Tuple[NDArray, ND
     return diffuse(adj, sender_vec, s0), sender_vec, theta_vec
 
 
-def independent_cascade(g, I0, ep_map, seed) -> List[Tuple[Set[int], Set[int]]]:
+def independent_cascade(g, I0, ep_map, gen) -> List[Tuple[Set[int], Set[int]]]:
     """
     Parameters
     ----------
