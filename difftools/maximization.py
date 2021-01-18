@@ -104,9 +104,6 @@ def simulate(idx, S, m, sigma_x, *args):
 def gen_sigma(m, sigma_x, *args):
     return lambda idx, S: simulate(idx, S, m, sigma_x, *args)['mean']
 
-def comp_experiment(n, m, G, S, T, probs, utils_dist):
-    pass
-
 def array_to_dict(arr):
     map = {}
     for i, v in enumerate(arr):
