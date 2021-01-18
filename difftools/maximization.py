@@ -157,8 +157,8 @@ def trial(n, k, m, G, l, probs):
  
     print('')
     
-    Ts = np.stack(Ts)
-    hist_utils = np.stack(hist_utils)
+    # Ts = np.stack(Ts)
+    # um_hists = np.stack(um_hists)
     plots = np.stack(plots)
 
     return {
