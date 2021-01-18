@@ -145,7 +145,7 @@ def trial(n, k, m, G, l, probs):
     
     for i, utils_dist in enumerate(utils_dists):
         print('.', end=('\n' if (i+1) % 64 == 0 else ''))
-        icu_sigma = sigma(m, icu_sigma_x, n, G, probs, array_to_dict(utils_dist))
+        icu_sigma = gen_sigma(m, icu_sigma_x, n, G, probs, array_to_dict(utils_dist))
         T, um_hist = greedy(n, k, icu_sigma)
         Ts.append(T)
         um_hists.append(um_hist)
