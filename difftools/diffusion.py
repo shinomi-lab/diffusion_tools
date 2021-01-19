@@ -3,8 +3,11 @@ import numpy as np
 import math
 import networkx as nx
 import numpy.random as nrd
+from nptyping import NDArray
 
-NDArray = Any
+import numba
+
+# NDArray = Any
 
 
 def get_gen(seed):
@@ -133,3 +136,42 @@ def independent_cascade(g, I0, ep_map, gen) -> List[Tuple[Set[int], Set[int]]]:
         ss.append((I, S))
 
     return ss
+
+@numba.njit('(int64, int64[:,:], int64[:], float64[:,:], optional(int64))')
+def ic_mat(n, adj, S, prob_mat, seed):
+    """
+    Parameters
+    ----------
+    n : the number of nodes
+    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
+    S : the numpy array form of a seed set
+    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
+    seed : a random seed set initially unless it is None
+
+    Returns
+    -------
+    The history of tuple of active node vector and activated node vector
+    """
+
+    I = S.astype(np.int64)
+    S = S.astype(np.int64)
+
+    ss = [(I, S)]
+
+    if not seed is None: nrd.seed(seed)
+
+    while np.count_nonzero(I) > 0:
+        J = np.zeros(n, np.int64)
+        
+        for i in range(n):
+            if I[i] == 0: continue
+            for j in range(n):
+                if adj[i, j] == 0: continue
+                if S[j] == 1: continue
+                if prob_mat[i, j] > nrd.random(): # gen.random():
+                    J[j] = 1
+        I = J.astype(np.int64)
+        S = S + I
+        ss.append((I, S))
+
+    return S, ss
