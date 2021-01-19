@@ -12,7 +12,6 @@ matplotlib = "*"
 scipy = "*"
 joblib = "*"
 numba = "*"
-nptyping = "*"
 
 [requires]
 python_version = "3.8"

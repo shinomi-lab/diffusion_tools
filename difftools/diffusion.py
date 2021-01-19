@@ -3,11 +3,10 @@ import numpy as np
 import math
 import networkx as nx
 import numpy.random as nrd
-from nptyping import NDArray
 
 import numba
 
-# NDArray = Any
+NDArray = Any
 
 
 def get_gen(seed):
