@@ -23,12 +23,11 @@ def test():
     S[1] = 1
     S[4] = 1
 
-    nrd.seed(0)
-    util_dist = dm.random_simplex(n)
+    util_dist = dm.random_simplex(0, n)
     # print(util_dist)
     # I = set(np.arange(n)[S == 1])
 
-    # print(dm.ic_sigma(100, n, adj, S, prob_mat))
+    # print(dm.ic_sigma(0, 100, n, adj, S, prob_mat))
     # print(dm.ic_dist_x(0, n, adj, S, prob_mat))
     # print(dm.icu_dist_x(0, n, adj, S, prob_mat, util_dist))
     # print(dm._ic_sigma_jit(100, S, n, adj, prob_mat, 0))
@@ -38,14 +37,11 @@ def test():
     # print(timeit(lambda: dm.im_greedy_jit(0, 2, 100, n, adj, prob_mat), number=1))
     # print(timeit(lambda: dm.um_greedy_jit(0, 2, 100, n, adj, prob_mat, util_dist), number=1))
     # print(timeit(lambda: dm.trial_jit(100, 2, 100, n, adj, prob_mat), number=1))
-    print(timeit(lambda: dm.trial(100, 2, 100, n, adj, prob_mat), number=1))
+    uds = np.stack([dm.random_simplex(None, n) for _ in range(100)])
+    # print(timeit(lambda: dm.trial_jit(100, 2, 100, n, adj, prob_mat), number=1))
+    print(timeit(lambda: dm.trial_with_sample_jit(2, 100, n, adj, prob_mat, uds), number=1))
+    print(timeit(lambda: dm.trial_with_sample(2, 100, n, adj, prob_mat, uds), number=1))
     
-@numba.njit('(optional(int64),)')
-def hoge(seed):
-    if not seed is None:
-        nrd.seed(seed)
-    return nrd.random()
-
 if __name__ == "__main__":
     test()
     # print(hoge(1))

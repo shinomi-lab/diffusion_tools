@@ -170,7 +170,7 @@ def ic_mat(n, adj, S, prob_mat, seed):
                 if prob_mat[i, j] > nrd.random(): # gen.random():
                     J[j] = 1
         I = J.astype(np.int64)
-        S = S + I
+        S += I
         ss.append((I, S))
 
     return S, ss
