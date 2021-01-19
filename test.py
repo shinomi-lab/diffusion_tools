@@ -38,7 +38,7 @@ def test():
     # print(timeit(lambda: dm.im_greedy_jit(0, 2, 100, n, adj, prob_mat), number=1))
     # print(timeit(lambda: dm.um_greedy_jit(0, 2, 100, n, adj, prob_mat, util_dist), number=1))
     # print(timeit(lambda: dm.trial_jit(100, 2, 100, n, adj, prob_mat), number=1))
-    # print(timeit(lambda: dm.trial(100, 2, 100, n, adj, prob_mat), number=1))
+    print(timeit(lambda: dm.trial(100, 2, 100, n, adj, prob_mat), number=1))
     
 @numba.njit('(optional(int64),)')
 def hoge(seed):

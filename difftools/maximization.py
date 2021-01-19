@@ -201,7 +201,7 @@ def um_greedy(seed, k, m, n, adj, prob_mat, util_dist):
 #         map[i] = v
 #     return map
 
-@numba.njit('(int64, int64, int64, int64, int64[:,:], float64[:,:])')
+@numba.njit('(int64, int64, int64, int64, int64[:,:], float64[:,:])', parallel=True)
 def trial_jit(l, k, m, n, adj, prob_mat):
     """
     Parameters
@@ -231,24 +231,20 @@ def trial_jit(l, k, m, n, adj, prob_mat):
     util_dists = [random_simplex(n) for _ in range(l)]
     Ts = []
     um_hists = []
-    total_utils = []
-    max_utils = []
+    total_utils = np.zeros(l)
+    max_utils = np.zeros(l)
     
-    for i, util_dist in enumerate(util_dists):
-        print(i, "\033[1A")
+    for i in numba.prange(l):
+        # print(i, "\033[1A")
+        util_dist = util_dists[i]
+
         T, um_hist = um_greedy(None, k, m, n, adj, prob_mat, util_dist)
         Ts.append(T)
         um_hists.append(um_hist)
 
-        total_util = icu_sigma(None, m, n, adj, S, prob_mat, util_dist)
-        max_util = icu_sigma(None, m, n, adj, T, prob_mat, util_dist)
+        total_utils[i] = icu_sigma(None, m, n, adj, S, prob_mat, util_dist)
+        max_utils[i] = icu_sigma(None, m, n, adj, T, prob_mat, util_dist)
     
-        total_utils.append(total_util)
-        max_utils.append(max_util)
- 
-    total_utils = np.asarray(total_utils)
-    max_utils = np.asarray(max_utils)
-
     return (
         total_utils,
         max_utils,
