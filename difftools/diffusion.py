@@ -165,6 +165,7 @@ def ic_mat(n, adj, S, prob_mat, seed):
         for i in range(n):
             if I[i] == 0: continue
             for j in range(n):
+                if J[j] == 1: continue
                 if adj[i, j] == 0: continue
                 if S[j] == 1: continue
                 if prob_mat[i, j] > nrd.random(): # gen.random():
