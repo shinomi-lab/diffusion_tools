@@ -7,9 +7,9 @@ import numba
 from timeit import timeit
 
 def test():
-    n = 50
-    g = nx.scale_free_graph(n, seed=0)
-    adj = nx.to_numpy_matrix(g, dtype=int)
+    n = 5
+    g = nx.reverse(nx.gnr_graph(n, 0.1, seed=0))
+    adj = nx.to_numpy_matrix(g, nodelist=range(n), dtype=int)
     
     nrd.seed(0)
     probs = {}
@@ -24,7 +24,7 @@ def test():
     S[4] = 1
 
     util_dist = dm.random_simplex(0, n)
-    # print(util_dist)
+    print(util_dist)
     # I = set(np.arange(n)[S == 1])
 
     # print(dm.ic_sigma(0, 100, n, adj, S, prob_mat))
@@ -32,15 +32,18 @@ def test():
     # print(dm.icu_dist_x(0, n, adj, S, prob_mat, util_dist))
     # print(dm._ic_sigma_jit(100, S, n, adj, prob_mat, 0))
 
+    # print(dm.icu_dist(0, 100, n, adj, S, prob_mat, util_dist))
+
     # print(timeit(lambda: dm.ic_dist(0, 100, n, adj, S, prob_mat), number=1))
     # print(timeit(lambda: dm.icu_dist(0, 100, n, adj, S, prob_mat, util_dist), number=1))
     # print(timeit(lambda: dm.im_greedy_jit(0, 2, 100, n, adj, prob_mat), number=1))
-    # print(timeit(lambda: dm.um_greedy_jit(0, 2, 100, n, adj, prob_mat, util_dist), number=1))
+    # print(dm.um_greedy(0, 2, 100, n, adj, prob_mat, util_dist))
     # print(timeit(lambda: dm.trial_jit(100, 2, 100, n, adj, prob_mat), number=1))
-    uds = np.stack([dm.random_simplex(None, n) for _ in range(100)])
-    # print(timeit(lambda: dm.trial_jit(100, 2, 100, n, adj, prob_mat), number=1))
-    print(timeit(lambda: dm.trial_with_sample_jit(2, 100, n, adj, prob_mat, uds), number=1))
-    print(timeit(lambda: dm.trial_with_sample(2, 100, n, adj, prob_mat, uds), number=1))
+    print(timeit(lambda: print(dm.trial_jit(100, 2, 100, n, adj, prob_mat)), number=1))
+    uds = np.stack([dm.random_simplex(None, n) for _ in range(10)])
+    # print(timeit(lambda: print(dm.trial_with_sample(2, 100, n, adj, prob_mat, uds)), number=1))
+    print(timeit(lambda: print(dm.trial_with_sample_jit(2, 100, n, adj, prob_mat, uds)), number=1))
+    # print(timeit(lambda: dm.trial_with_sample(2, 100, n, adj, prob_mat, uds), number=1))
     
 if __name__ == "__main__":
     test()

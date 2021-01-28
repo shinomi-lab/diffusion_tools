@@ -143,35 +143,46 @@ def ic_mat(n, adj, S, prob_mat, seed):
     ----------
     n : the number of nodes
     adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : the numpy array form of a seed set
+    S : a seed set as an index vector (1d {0, 1} array) 
     prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
     seed : a random seed set initially unless it is None
 
     Returns
     -------
-    The history of tuple of active node vector and activated node vector
+    The tuple of
+        - activated node vector
+        - the history of tuple of active node vector and activated node vector
     """
 
-    I = S.astype(np.int64)
-    S = S.astype(np.int64)
+    I = S.astype(np.int64)  # active node group (currently activated)
+    T = S.astype(np.int64)  # total active node group (activated)
 
-    ss = [(I, S)]
+    hist = [(I, T)] # history
 
     if not seed is None: nrd.seed(seed)
 
     while np.count_nonzero(I) > 0:
-        J = np.zeros(n, np.int64)
-        
+        # make a new active group with a current one
+        J = np.zeros(n, np.int64)   # init a new active group
         for i in range(n):
             if I[i] == 0: continue
+            # i is in a current active group
             for j in range(n):
+                if T[j] == 1: continue
                 if J[j] == 1: continue
+                # j is not active yet
                 if adj[i, j] == 0: continue
-                if S[j] == 1: continue
-                if prob_mat[i, j] > nrd.random(): # gen.random():
+                # j is a successor of i
+                # note: a_ij = 0 if and only if an edge (i, j) does not exist in a graph
+                if prob_mat[i, j] > nrd.random():   # j should not be activated if p = 0, and j should be acitvated if p = 1
+                    # activate j with a probability as prob_mat[i, j]
                     J[j] = 1
-        I = J.astype(np.int64)
-        S += I
-        ss.append((I, S))
 
-    return S, ss
+        # replace an active group to new one
+        I = J.astype(np.int64)
+        # add new active nodes to the total group 
+        # note: for all j, J_j = 1 & T_j = 0, so every component of T + I (= T + J) is at most 1
+        T += I
+        hist.append((I, T))
+
+    return T, hist
