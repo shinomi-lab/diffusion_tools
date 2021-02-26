@@ -7,7 +7,7 @@ import numba
 from timeit import timeit
 
 def test():
-    g = nx.read_weighted_edgelist("./graph.txt", nodetype=int)
+    g = nx.read_weighted_edgelist("./test/graph.txt", nodetype=int)
     n = g.number_of_nodes()
     # adj = nx.to_numpy_matrix(g, nodelist=range(n), dtype=int)
     adj = nx.to_numpy_matrix(g, nodelist=g.nodes(), weight=None, dtype=int)
