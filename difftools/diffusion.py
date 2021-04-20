@@ -4,7 +4,10 @@ import math
 import networkx as nx
 import numpy.random as nrd
 
-import numba
+from numba.pycc import CC
+from numba import njit
+
+cc = CC("diffusion")
 
 NDArray = Any
 
@@ -140,7 +143,11 @@ def independent_cascade(g, I0, ep_map, gen) -> List[Tuple[Set[int], Set[int]]]:
     return ss
 
 
-@numba.njit("(int64, int64[:,:], int64[:], float64[:,:], optional(int64))")
+@cc.export(
+    "ic_mat",
+    "(i8, i8[:,:], i8[:], f8[:,:], optional(i8))",
+)
+@njit
 def ic_mat(n, adj, S, prob_mat, seed):
     """
     Parameters
@@ -161,7 +168,8 @@ def ic_mat(n, adj, S, prob_mat, seed):
     I = S.astype(np.int64)  # active node group (currently activated)
     T = S.astype(np.int64)  # total active node group (activated)
 
-    hist = [(I, T)]  # history
+    # history
+    hist = [(I, T)]
 
     if not seed is None:
         nrd.seed(seed)
@@ -196,4 +204,11 @@ def ic_mat(n, adj, S, prob_mat, seed):
         T += I
         hist.append((I, T))
 
-    return T, hist
+    l = len(hist)
+    Is = np.zeros((l, n), np.int64)
+    Ts = np.zeros((l, n), np.int64)
+    for i, h in enumerate(hist):
+        Is[i] = h[0]
+        Ts[i] = h[1]
+
+    return T, Is, Ts

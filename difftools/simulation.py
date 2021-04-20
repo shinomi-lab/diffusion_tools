@@ -1,7 +1,7 @@
 from typing import Tuple, Any, Set, List
 import numpy as np
 import scipy as sp
-import difftools.diffusion as diff
+import difftools.diffusion as dd
 import difftools.combination as comb
 from joblib import Parallel, delayed
 from joblib import parallel_backend
@@ -27,11 +27,11 @@ def iterate_parallel(f, t, *args):
 
 
 def fold_all_pattern(n, adj, k, i) -> List[List[Tuple[Any, Any]]]:
-    s0 = diff.single_source(n, i)
+    s0 = dd.single_source(n, i)
 
     with parallel_backend("multiprocessing"):
         rs = Parallel(n_jobs=-1)(
-            delayed(diff.diffuse)(adj, s, s0)
+            delayed(dd.diffuse)(adj, s, s0)
             for (num, s) in comb.comb_binary_with_index(n, k, i)
         )
 
@@ -39,7 +39,7 @@ def fold_all_pattern(n, adj, k, i) -> List[List[Tuple[Any, Any]]]:
 
 
 def fold_random_pattern(n, adj, k, i, repeat, gen) -> List[List[Tuple[Any, Any]]]:
-    s0 = diff.single_source(n, i)
+    s0 = dd.single_source(n, i)
 
     with parallel_backend("multiprocessing"):
         ss = Parallel(n_jobs=-1)(
@@ -54,9 +54,7 @@ def fold_random_pattern(n, adj, k, i, repeat, gen) -> List[List[Tuple[Any, Any]]
         mem[num] = s
 
     with parallel_backend("multiprocessing"):
-        rs = Parallel(n_jobs=-1)(
-            delayed(diff.diffuse)(adj, s, s0) for s in mem.values()
-        )
+        rs = Parallel(n_jobs=-1)(delayed(dd.diffuse)(adj, s, s0) for s in mem.values())
 
     return rs
 
@@ -70,7 +68,7 @@ def search_with_approx(
         return fold_all_pattern(n, adj, k, i)
     else:
         repeat = int(comb_count * rate)
-        gen = diff.get_gen(seed)
+        gen = dd.get_gen(seed)
         return fold_random_pattern(n, adj, k, i, repeat, gen)
 
 
