@@ -11,25 +11,29 @@ import numba
 from joblib import Parallel, delayed, parallel_backend
 
 
-@numba.njit('float64[:](int64, float64[:])')
+@numba.njit("float64[:](int64, float64[:])")
 def _make_simplex(n, s):
     m = n - 1
     r = np.zeros(n)
     r[0] = s[0]
-    r[n-1] = 1 - s[-1]
-    for i in range(m-1):
-        r[i + 1] = s[i+1] - s[i]
+    r[n - 1] = 1 - s[-1]
+    for i in range(m - 1):
+        r[i + 1] = s[i + 1] - s[i]
     return r
 
-@numba.njit('float64[:](optional(int64), int64)')
+
+@numba.njit("float64[:](optional(int64), int64)")
 def random_simplex(seed, n):
-    if not seed is None: nrd.seed(seed)
+    if not seed is None:
+        nrd.seed(seed)
     return _make_simplex(n, np.sort(nrd.random(n - 1)))
+
 
 def random_simplex_gen(n, f):
     return _make_simplex(n, np.sort(f(n - 1)))
 
-@numba.njit('(optional(int64), int64, int64[:,:], int64[:], float64[:,:])')
+
+@numba.njit("(optional(int64), int64, int64[:,:], int64[:], float64[:,:])")
 def ic_dist_x(seed, n, adj, S, prob_mat):
     """
     Parameters
@@ -37,7 +41,7 @@ def ic_dist_x(seed, n, adj, S, prob_mat):
     seed : a random seed set initially unless it is None
     n : the number of nodes
     adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array) 
+    S : a seed set as an index vector (1d {0, 1} array)
     prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
 
     Returns
@@ -46,7 +50,8 @@ def ic_dist_x(seed, n, adj, S, prob_mat):
     """
     return diff.ic_mat(n, adj, S, prob_mat, seed)[0]
 
-@numba.njit('(optional(int64), int64, int64[:,:], int64[:], float64[:,:], float64[:])')
+
+@numba.njit("(optional(int64), int64, int64[:,:], int64[:], float64[:,:], float64[:])")
 def icu_dist_x(seed, n, adj, S, prob_mat, util_dist):
     """
     Parameters
@@ -54,7 +59,7 @@ def icu_dist_x(seed, n, adj, S, prob_mat, util_dist):
     seed : a random seed set initially unless it is None
     n : the number of nodes
     adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array) 
+    S : a seed set as an index vector (1d {0, 1} array)
     prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
     util_dist : an utility distribusion (1d float64 array)
 
@@ -65,7 +70,10 @@ def icu_dist_x(seed, n, adj, S, prob_mat, util_dist):
     d = diff.ic_mat(n, adj, S, prob_mat, seed)[0]
     return d * util_dist
 
-@numba.njit('(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:])', parallel=True)
+
+@numba.njit(
+    "(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:])", parallel=True
+)
 def ic_dist(seed, m, n, adj, S, prob_mat):
     """
     Parameters
@@ -74,7 +82,7 @@ def ic_dist(seed, m, n, adj, S, prob_mat):
     m : an iteration count of influence functions
     n : the number of nodes
     adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array) 
+    S : a seed set as an index vector (1d {0, 1} array)
     prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
 
     Returns
@@ -82,13 +90,17 @@ def ic_dist(seed, m, n, adj, S, prob_mat):
     An active rate vector (a node distribution of the rate of actived times in m iterations)
     """
     d = np.zeros(n, np.float64)
-    if not seed is None: nrd.seed(seed)
+    if not seed is None:
+        nrd.seed(seed)
     for i in numba.prange(m):
         d += ic_dist_x(None, n, adj, S, prob_mat)
     dist = d / m
     return dist
 
-@numba.njit('(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:], float64[:])')
+
+@numba.njit(
+    "(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:], float64[:])"
+)
 def icu_dist(seed, m, n, adj, S, prob_mat, util_dist):
     """
     Parameters
@@ -97,7 +109,7 @@ def icu_dist(seed, m, n, adj, S, prob_mat, util_dist):
     m : an iteration count of influence functions
     n : the number of nodes
     adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array) 
+    S : a seed set as an index vector (1d {0, 1} array)
     prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
     util_dist : an utility distribusion (1d float64 array)
 
@@ -107,7 +119,10 @@ def icu_dist(seed, m, n, adj, S, prob_mat, util_dist):
     """
     return ic_dist(seed, m, n, adj, S, prob_mat) * util_dist
 
-@numba.njit('float64(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:])')
+
+@numba.njit(
+    "float64(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:])"
+)
 def ic_sigma(seed, m, n, adj, S, prob_mat):
     """
     Parameters
@@ -116,7 +131,7 @@ def ic_sigma(seed, m, n, adj, S, prob_mat):
     m : an iteration count of influence functions
     n : the number of nodes
     adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array) 
+    S : a seed set as an index vector (1d {0, 1} array)
     prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
 
     Returns
@@ -125,7 +140,10 @@ def ic_sigma(seed, m, n, adj, S, prob_mat):
     """
     return ic_dist(seed, m, n, adj, S, prob_mat).sum()
 
-@numba.njit('float64(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:], float64[:])')
+
+@numba.njit(
+    "float64(optional(int64), int64, int64, int64[:,:], int64[:], float64[:,:], float64[:])"
+)
 def icu_sigma(seed, m, n, adj, S, prob_mat, util_dist):
     """
     Parameters
@@ -134,7 +152,7 @@ def icu_sigma(seed, m, n, adj, S, prob_mat, util_dist):
     m : an iteration count of influence functions
     n : the number of nodes
     adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array) 
+    S : a seed set as an index vector (1d {0, 1} array)
     prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
     util_dist : an utility distribusion (1d float64 array)
 
@@ -144,7 +162,8 @@ def icu_sigma(seed, m, n, adj, S, prob_mat, util_dist):
     """
     return icu_dist(seed, m, n, adj, S, prob_mat, util_dist).sum()
 
-@numba.njit('(optional(int64), int64, int64, int64, int64[:,:], float64[:,:])')
+
+@numba.njit("(optional(int64), int64, int64, int64, int64[:,:], float64[:,:])")
 def im_greedy(seed, k, m, n, adj, prob_mat):
     """
     Parameters
@@ -180,7 +199,10 @@ def im_greedy(seed, k, m, n, adj, prob_mat):
 
     return (S, hist)
 
-@numba.njit('(optional(int64), int64, int64, int64, int64[:,:], float64[:,:], float64[:])')
+
+@numba.njit(
+    "(optional(int64), int64, int64, int64, int64[:,:], float64[:,:], float64[:])"
+)
 def um_greedy(seed, k, m, n, adj, prob_mat, util_dist):
     """
     Parameters
@@ -217,7 +239,10 @@ def um_greedy(seed, k, m, n, adj, prob_mat, util_dist):
 
     return (S, hist)
 
-@numba.njit('(int64, int64, int64, int64[:,:], float64[:,:], float64[:,:])', parallel=False)
+
+@numba.njit(
+    "(int64, int64, int64, int64[:,:], float64[:,:], float64[:,:])", parallel=False
+)
 def trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists):
     """
     Parameters
@@ -236,9 +261,9 @@ def trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists):
         a list of the optimal max utility with each utility sample
         an opt-seed by influence maximization
         a history of influence maximization
-        a list of utility vectors, 
+        a list of utility vectors,
         an opt-seed list by utility maximization
-        a list of a history of utility maximization 
+        a list of a history of utility maximization
     """
     S, im_hist = im_greedy(None, k, m, n, adj, prob_mat)
     l = len(util_dists)
@@ -246,7 +271,7 @@ def trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists):
     um_hists = np.zeros((l, k, n))
     total_utils = np.zeros(l)
     max_utils = np.zeros(l)
-    
+
     for i in numba.prange(l):
         util_dist = util_dists[i]
 
@@ -256,18 +281,19 @@ def trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists):
 
         total_utils[i] = icu_sigma(None, m, n, adj, S, prob_mat, util_dist)
         max_utils[i] = icu_sigma(None, m, n, adj, T, prob_mat, util_dist)
-    
+
     return (
         total_utils,
         max_utils,
-        S, 
+        S,
         im_hist,
-        util_dists, 
+        util_dists,
         Ts,
-        um_hists, 
+        um_hists,
     )
 
-@numba.njit('(int64, int64, int64, int64, int64[:,:], float64[:,:])', parallel=False)
+
+@numba.njit("(int64, int64, int64, int64, int64[:,:], float64[:,:])", parallel=False)
 def trial_jit(l, k, m, n, adj, prob_mat):
     """
     Parameters
@@ -286,15 +312,16 @@ def trial_jit(l, k, m, n, adj, prob_mat):
         a list of the optimal max utility with each utility sample
         an opt-seed by influence maximization
         a history of influence maximization
-        a list of utility vectors, 
+        a list of utility vectors,
         an opt-seed list by utility maximization
-        a list of a history of utility maximization 
+        a list of a history of utility maximization
     """
     util_dists = np.zeros((l, n), dtype=np.float64)
     for i in range(l):
         util_dists[i] = random_simplex(None, n)
 
     return trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists)
+
 
 def trial(l, k, m, n, adj, prob_mat):
     """
@@ -314,22 +341,23 @@ def trial(l, k, m, n, adj, prob_mat):
         `max-utils`: a list of the optimal max utility with each utility sample
         `im-seed`: an opt-seed by influence maximization
         `im-hist`: a history of influence maximization
-        `utils`: a list of utility vectors, 
+        `utils`: a list of utility vectors,
         `um-seeds`: an opt-seed list by utility maximization
-        `um-hists`: a list of a history of utility maximization 
+        `um-hists`: a list of a history of utility maximization
     """
 
     ret = trial_jit(l, k, m, n, adj, prob_mat)
 
     return {
-        'total-utils': ret[0],
-        'max-utils': ret[1],
-        'im-seed': ret[2], 
-        'im-hist': ret[3],
-        'utils': ret[4], 
-        'um-seeds': ret[5],
-        'um-hists': ret[6], 
+        "total-utils": ret[0],
+        "max-utils": ret[1],
+        "im-seed": ret[2],
+        "im-hist": ret[3],
+        "utils": ret[4],
+        "um-seeds": ret[5],
+        "um-hists": ret[6],
     }
+
 
 def trial_with_sample(k, m, n, adj, prob_mat, util_dists):
     """
@@ -349,38 +377,39 @@ def trial_with_sample(k, m, n, adj, prob_mat, util_dists):
         `max-utils`: a list of the optimal max utility with each utility sample
         `im-seed`: an opt-seed by influence maximization
         `im-hist`: a history of influence maximization
-        `utils`: a list of utility vectors, 
+        `utils`: a list of utility vectors,
         `um-seeds`: an opt-seed list by utility maximization
-        `um-hists`: a list of a history of utility maximization 
+        `um-hists`: a list of a history of utility maximization
     """
 
     ret = trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists)
 
     return {
-        'total-utils': ret[0],
-        'max-utils': ret[1],
-        'im-seed': ret[2], 
-        'im-hist': ret[3],
-        'utils': ret[4], 
-        'um-seeds': ret[5],
-        'um-hists': ret[6], 
+        "total-utils": ret[0],
+        "max-utils": ret[1],
+        "im-seed": ret[2],
+        "im-hist": ret[3],
+        "utils": ret[4],
+        "um-seeds": ret[5],
+        "um-hists": ret[6],
     }
+
 
 def plot_samples(total_utils, max_utils):
     fig = plt.figure(dpi=100)
-    fig.patch.set_facecolor('white')
-    
+    fig.patch.set_facecolor("white")
+
     x_max = max_utils.max() + 0.02
     x_min = max_utils.min() - 0.02
 
     ax = fig.add_subplot(111)
-    ax.scatter(total_utils, max_utils, s=10, label='utility sample')
+    ax.scatter(total_utils, max_utils, s=10, label="utility sample")
 
     x = np.linspace(x_min, x_max, 100)
-    ax.plot(x, x, c='r', linewidth=0.5, label='$y=x$')
-    
-    ax.set_xlabel('Total Utility of Optimal Max Influence Range')
-    ax.set_ylabel('Optimal Max Utility')
-    ax.set_aspect('equal')
-    ax.legend(loc='lower right')
+    ax.plot(x, x, c="r", linewidth=0.5, label="$y=x$")
+
+    ax.set_xlabel("Total Utility of Optimal Max Influence Range")
+    ax.set_ylabel("Optimal Max Utility")
+    ax.set_aspect("equal")
+    ax.legend(loc="lower right")
     plt.show()

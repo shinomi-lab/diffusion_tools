@@ -7,13 +7,15 @@ def comb_binary(n, r):
     stack = {(n, r, 0)}
     ks = []
 
-    while (len(stack)):
+    while len(stack):
         m, s, k = stack.pop()
         sd = s - 1
         for i in range(sd, m):
-            t = (i, sd, k + (2**i))
-            if sd == 0: ks.append(t[2])
-            else: stack.add(t)
+            t = (i, sd, k + (2 ** i))
+            if sd == 0:
+                ks.append(t[2])
+            else:
+                stack.add(t)
 
     return ks
 
@@ -54,7 +56,7 @@ def comb_binary_with_index(n, r, i):
     ts = []
     ks = comb_binary(n - 1, r - 1)
 
-    with parallel_backend('multiprocessing'):
+    with parallel_backend("multiprocessing"):
         ts = Parallel(n_jobs=-1)(delayed(insert_bit)(k, n, i) for k in ks)
 
     return ts

@@ -5,11 +5,13 @@ import pickle
 
 def set_color_map(cmap_name, n, ax):
     cm = plt.get_cmap(cmap_name)
-    ax.set_prop_cycle(color=[cm(1. * i / n) for i in range(n)])
+    ax.set_prop_cycle(color=[cm(1.0 * i / n) for i in range(n)])
+
 
 def dump_obj(dump_path, obj, name):
-    with open(Path(dump_path, name), 'wb') as f:
+    with open(Path(dump_path, name), "wb") as f:
         pickle.dump(obj, f)
+
 
 def load_obj(dump_path, name):
     obj = None
