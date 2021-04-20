@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "diffusion_tools"
+version = "0.1.0"
+description = ""
+authors = ["Shinomiya-Lab <lab.shinomiya@outlook.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "*"
+networkx = "*"
+matplotlib = "*"
+scipy = "*"
+joblib = "*"
+numba = "*"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^20.8b1", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
