@@ -1,4 +1,4 @@
-from typing import Tuple, Any, Set, List
+from typing import Tuple, Any, Set, List, Optional
 import numpy as np
 import math
 import networkx as nx
@@ -144,25 +144,30 @@ def independent_cascade(g, I0, ep_map, gen) -> List[Tuple[Set[int], Set[int]]]:
 
 
 @cc.export(
-    "ic_mat",
+    "ic_adjmat",
     "(i8, i8[:,:], i8[:], f8[:,:], optional(i8))",
 )
 @njit
-def ic_mat(n, adj, S, prob_mat, seed):
+def ic_adjmat(
+    n: int, adj: np.ndarray, S: np.ndarray, prob_mat: np.ndarray, seed: Optional[int]
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Parameters
     ----------
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-    seed : a random seed set initially unless it is None
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array
+       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,
+       the indicator of $S$ is a $n$-dimentional binary vector where the $i$-th component equals 1 if $i \\in V$ otherwise 0.
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+    seed : a seed value to initialize RNG unless None given
 
     Returns
     -------
-    The tuple of
-        - activated node vector
-        - the history of tuple of active node vector and activated node vector
+    The tuple of:
+        - the indicator of an activated node set
+        - the history of active node indicators
+        - the history of activated node indicators
     """
 
     I = S.astype(np.int64)  # active node group (currently activated)

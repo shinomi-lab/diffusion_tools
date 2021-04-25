@@ -1,9 +1,17 @@
-import difftools.diffusion as dd
-import difftools.maximization as dm
+import difftools.algebra
+import difftools.diffusion
+import difftools.maximization
 
 from typing import Any, Dict
 
-ext_modules = [dd.cc.distutils_extension(), dm.cc.distutils_extension()]
+ext_modules = [
+    cc.distutils_extension()
+    for cc in [
+        difftools.algebra.cc,
+        difftools.diffusion.cc,
+        difftools.maximization.cc,
+    ]
+]
 
 
 def build(setup_kwargs: Dict[str, Any]) -> None:

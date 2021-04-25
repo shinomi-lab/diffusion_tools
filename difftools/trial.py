@@ -1,176 +1,117 @@
+from typing import Tuple, Any, Set, List, Dict
 import difftools.maximization as dm
+import difftools.algebra as da
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 # import numba
 
-from joblib import Parallel, delayed, parallel_backend
+from joblib import Parallel, delayed
 
 
-def trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists):
+def __f(util_dist, k, m, n, adj, prob_mat, S) -> List[np.ndarray]:
+    # util_dist = util_dists[i]
+    # T, um_hist = dm.um_greedy(None, k, m, n, adj, prob_mat, util_dist)
+    # Ts[i] = T
+    # um_hists[i] = um_hist
+    # total_utils[i] = dm.icu_sigma(None, m, n, adj, S, prob_mat, util_dist)
+    # max_utils[i] = dm.icu_sigma(None, m, n, adj, T, prob_mat, util_dist)
+
+    T, swm_hist = dm.swm_greedy(None, k, m, n, adj, prob_mat, util_dist)
+    sw_ic = dm.ic_sw_sprd_exp(None, m, n, adj, S, prob_mat, util_dist)
+    sw_opt = dm.ic_sw_sprd_exp(None, m, n, adj, T, prob_mat, util_dist)
+
+    return [T, swm_hist, sw_ic, sw_opt]
+
+
+def trial_with_sample(
+    k: int,
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    prob_mat: np.ndarray,
+    util_dists: np.ndarray,
+) -> Dict[str, np.ndarray]:
     """
     Parameters
     ----------
-    k : the maximum size of seed node set
-    m : sampling size of influence functions
+    k : the maximum size of seed node sets
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-    util_dists : utility sample list (2d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+    util_dists : utility distribusion samples on the indicator of $V$ as 1d float64 array
 
     Returns
     -------
-    The tuple of:
-        a list of the total utility by IC with IM opt seed
-        a list of the optimal max utility with each utility sample
-        an opt-seed by influence maximization
-        a history of influence maximization
-        a list of utility vectors,
-        an opt-seed list by utility maximization
-        a list of a history of utility maximization
+    The dictionary as:
+        `sw-ims`: a list of the social welfare by an IM opt seed set under the IC model
+        `sw-opts`: a list of the near maximums of social welfare for each utility distribution samples
+        `im-seed`: an opt-seed by influence maximization
+        `im-hist`: a history of influence maximization
+        `swm-seeds`: an opt-seed list by utility maximization
+        `swm-hists`: a list of a history of utility maximization
     """
-    S, im_hist = dm.im_greedy(None, k, m, n, adj, prob_mat)
-    l = len(util_dists)
+    # l = len(util_dists)
     # Ts = np.zeros((l, n), dtype=np.int64)
     # um_hists = np.zeros((l, k, n))
     # total_utils = np.zeros(l)
     # max_utils = np.zeros(l)
 
-    def f(util_dist):
-        # util_dist = util_dists[i]
+    S, im_hist = dm.im_greedy(None, k, m, n, adj, prob_mat)
+    ret = Parallel(n_jobs=-1)(
+        delayed(__f)(util_dist, k, m, n, adj, prob_mat, S) for util_dist in util_dists
+    )
+    ret = list(zip(*ret))
 
-        # T, um_hist = dm.um_greedy(None, k, m, n, adj, prob_mat, util_dist)
-        # Ts[i] = T
-        # um_hists[i] = um_hist
-
-        # total_utils[i] = dm.icu_sigma(None, m, n, adj, S, prob_mat, util_dist)
-        # max_utils[i] = dm.icu_sigma(None, m, n, adj, T, prob_mat, util_dist)
-        T, um_hist = dm.um_greedy(None, k, m, n, adj, prob_mat, util_dist)
-        total_util = dm.icu_sigma(None, m, n, adj, S, prob_mat, util_dist)
-        max_util = dm.icu_sigma(None, m, n, adj, T, prob_mat, util_dist)
-
-        return (T, um_hist, total_util, max_util)
-
-    r = Parallel(n_jobs=-1)(delayed(f)(util_dist) for util_dist in util_dists)
-
-    return r
-    # _Ts, _um_hists, _total_utils, _max_utils = zip(*r)
-    # Ts = np.stack(_Ts)
-    # um_hists = np.stack(_um_hists)
-    # total_utils = np.stack(_total_utils)
-    # max_utils = np.stack(_max_utils)
-
-    # return (
-    #     total_utils,
-    #     max_utils,
-    #     S,
-    #     im_hist,
-    #     util_dists,
-    #     Ts,
-    #     um_hists,
-    # )
+    return {
+        "sw-ims": np.stack(ret[2]),
+        "sw-opts": np.stack(ret[3]),
+        "im-seed": S,
+        "im-hist": im_hist,
+        "swm-seeds": np.stack(ret[0]),
+        "swm-hists": np.stack(ret[1]),
+    }
 
 
-def trial_jit(l, k, m, n, adj, prob_mat):
+def trial(
+    l: int,
+    k: int,
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    prob_mat: np.ndarray,
+) -> Dict[str, np.ndarray]:
     """
     Parameters
     ----------
-    l : sampling size of utilities
-    k : the maximum size of seed node set
-    m : sampling size of influence functions
+    l : the number of utility distribution samples
+    k : the maximum size of seed node sets
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
 
     Returns
     -------
-    The tuple of:
-        a list of the total utility by IC with IM opt seed
-        a list of the optimal max utility with each utility sample
-        an opt-seed by influence maximization
-        a history of influence maximization
-        a list of utility vectors,
-        an opt-seed list by utility maximization
-        a list of a history of utility maximization
+    The dictionary as:
+        `sw-ims`: a list of the social welfare by an IM near opt seed set under the IC model
+        `sw-opts`: a list of the opt-maximal social welfare for each utility distribution samples
+        `im-seed`: an opt-seed by influence maximization
+        `im-hist`: a history of influence maximization
+        `swm-seeds`: an indicator list of SWM near optimal seed sets
+        `swm-hists`: a list of a history of SWM
+        `utils` : $l$-size uniform samples of utility distribusions on the indicator of $V$ as 1d float64 array
     """
     util_dists = np.zeros((l, n), dtype=np.float64)
     for i in range(l):
-        util_dists[i] = dm.random_simplex(None, n)
+        util_dists[i] = da.random_simplex(None, n)
 
-    return trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists)
+    ret = trial_with_sample(k, m, n, adj, prob_mat, util_dists)
+    ret["utils"] = util_dists
 
-
-def trial(l, k, m, n, adj, prob_mat):
-    """
-    Parameters
-    ----------
-    l : sampling size of utilities
-    k : the maximum size of seed node set
-    m : sampling size of influence functions
-    n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-
-    Returns
-    -------
-    The dictionary as:
-        `total-utils`: a list of the total utility by IC with IM opt seed
-        `max-utils`: a list of the optimal max utility with each utility sample
-        `im-seed`: an opt-seed by influence maximization
-        `im-hist`: a history of influence maximization
-        `utils`: a list of utility vectors,
-        `um-seeds`: an opt-seed list by utility maximization
-        `um-hists`: a list of a history of utility maximization
-    """
-
-    ret = trial_jit(l, k, m, n, adj, prob_mat)
-
-    return {
-        "total-utils": ret[0],
-        "max-utils": ret[1],
-        "im-seed": ret[2],
-        "im-hist": ret[3],
-        "utils": ret[4],
-        "um-seeds": ret[5],
-        "um-hists": ret[6],
-    }
-
-
-def trial_with_sample(k, m, n, adj, prob_mat, util_dists):
-    """
-    Parameters
-    ----------
-    k : the maximum size of seed node set
-    m : sampling size of influence functions
-    n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-    util_dists : utility sample list (2d float64 array)
-
-    Returns
-    -------
-    The dictionary as:
-        `total-utils`: a list of the total utility by IC with IM opt seed
-        `max-utils`: a list of the optimal max utility with each utility sample
-        `im-seed`: an opt-seed by influence maximization
-        `im-hist`: a history of influence maximization
-        `utils`: a list of utility vectors,
-        `um-seeds`: an opt-seed list by utility maximization
-        `um-hists`: a list of a history of utility maximization
-    """
-
-    ret = trial_with_sample_jit(k, m, n, adj, prob_mat, util_dists)
-
-    return {
-        "total-utils": ret[0],
-        "max-utils": ret[1],
-        "im-seed": ret[2],
-        "im-hist": ret[3],
-        "utils": ret[4],
-        "um-seeds": ret[5],
-        "um-hists": ret[6],
-    }
+    return ret
 
 
 def plot_samples(total_utils, max_utils):

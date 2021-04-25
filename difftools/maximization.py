@@ -1,7 +1,10 @@
+from typing import Tuple, Any, Set, List, Optional
 import difftools.diffusion as dd
+import difftools.algebra as da
 
 import numpy as np
 import numpy.random as nrd
+import numpy.typing as npt
 
 import numba
 from numba import njit
@@ -10,186 +13,225 @@ from numba.pycc import CC
 cc = CC("maximization")
 
 
-@cc.export("_make_simplex", "f8[:](i8, f8[:])")
+@cc.export("ic_infl_prop", "i8[:](optional(i8), i8, i8[:,:], i8[:], f8[:,:])")
 @njit
-def _make_simplex(n, s):
-    m = n - 1
-    r = np.zeros(n)
-    r[0] = s[0]
-    r[n - 1] = 1 - s[-1]
-    for i in range(m - 1):
-        r[i + 1] = s[i + 1] - s[i]
-    return r
-
-
-@cc.export("random_simplex", "f8[:](optional(i8), i8)")
-@njit
-def random_simplex(seed, n):
-    if not seed is None:
-        nrd.seed(seed)
-    return _make_simplex(n, np.sort(nrd.random(n - 1)))
-
-
-def random_simplex_gen(n, f):
-    return _make_simplex(n, np.sort(f(n - 1)))
-
-
-@cc.export("ic_dist_x", "i8[:](optional(i8), i8, i8[:,:], i8[:], f8[:,:])")
-@njit
-def ic_dist_x(seed, n, adj, S, prob_mat):
+def ic_infl_prop(
+    seed: Optional[int], n: int, adj: np.ndarray, S: np.ndarray, prob_mat: np.ndarray
+) -> np.ndarray:
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
+    seed : a seed value to initialize RNG unless None given
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array
+       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,
+       the indicator of $S$ is a $n$-dimentional binary vector where $i$-th component equals 1 if $i \\in V$ otherwise 0.
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
 
     Returns
     -------
-    An activated node vector
+    the indicator of an activated node set
     """
-    return dd.ic_mat(n, adj, S, prob_mat, seed)[0]
+    return dd.ic_adjmat(n, adj, S, prob_mat, seed)[0]
 
 
 @cc.export(
-    "icu_dist_x",
+    "ic_util_prop",
     "f8[:](optional(i8), i8, i8[:,:], i8[:], f8[:,:], f8[:])",
 )
 @njit
-def icu_dist_x(seed, n, adj, S, prob_mat, util_dist):
+def ic_util_prop(
+    seed: Optional[int],
+    n: int,
+    adj: np.ndarray,
+    S: np.ndarray,
+    prob_mat: np.ndarray,
+    util_dist: np.ndarray,
+) -> np.ndarray:
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
+    seed : a seed value to initialize RNG unless None given
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-    util_dist : an utility distribusion (1d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array
+       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,
+       the indicator of $S$ is a $n$-dimentional binary vector where the $i$-th component equals 1 if $i \\in V$ otherwise 0.
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+    util_dist : an utility distribusion on the indicator of $V$ as 1d float64 array
 
     Returns
     -------
-    A gained utility distribution, a vector of which i-th component is i's utility if i is activated and 0 otherwise
+    the utility distribution on the indicator of an activated node set
+        where $i$-th component equals the utility of $i$ if $i$ is activated otherwise 0
     """
-    d = dd.ic_mat(n, adj, S, prob_mat, seed)[0]
+    d = dd.ic_adjmat(n, adj, S, prob_mat, seed)[0]
     return d * util_dist
 
 
-@cc.export("ic_dist", "(optional(i8), i8, i8, i8[:,:], i8[:], f8[:,:])")
+@cc.export("ic_infl_prop_exp", "(optional(i8), i8, i8, i8[:,:], i8[:], f8[:,:])")
 @njit
-def ic_dist(seed, m, n, adj, S, prob_mat):
+def ic_infl_prop_exp(
+    seed: Optional[int],
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    S: np.ndarray,
+    prob_mat: np.ndarray,
+) -> np.ndarray:
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
-    m : an iteration count of influence functions
+    seed : a seed value to initialize RNG unless None given
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array
+       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,
+       the indicator of $S$ is a $n$-dimentional binary vector where $i$-th component equals 1 if $i \\in V$ otherwise 0.
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
 
     Returns
     -------
-    An active rate vector (a node distribution of the rate of actived times in m iterations)
+    An activation ratio distribution on $V$
+        where $i$-th component is the average times that $i$ is activated in m iterations
     """
     d = np.zeros(n, np.float64)
     if not seed is None:
         nrd.seed(seed)
     for i in numba.prange(m):
-        d += ic_dist_x(None, n, adj, S, prob_mat)
+        d += ic_infl_prop(None, n, adj, S, prob_mat)
     dist = d / m
     return dist
 
 
 @cc.export(
-    "icu_dist",
+    "ic_util_prop_exp",
     "(optional(i8), i8, i8, i8[:,:], i8[:], f8[:,:], f8[:])",
 )
 @njit
-def icu_dist(seed, m, n, adj, S, prob_mat, util_dist):
+def ic_util_prop_exp(
+    seed: Optional[int],
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    S: np.ndarray,
+    prob_mat: np.ndarray,
+    util_dist: np.ndarray,
+):
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
-    m : an iteration count of influence functions
+    seed : a seed value to initialize RNG unless None given
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-    util_dist : an utility distribusion (1d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array
+       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,
+       the indicator of $S$ is a $n$-dimentional binary vector where $i$-th component equals 1 if $i \\in V$ otherwise 0.
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+    util_dist : an utility distribusion on the indicator of $V$ as 1d float64 array
 
     Returns
     -------
-    An average of m gained utility distributions (= Hadamard product of an utilty distribution and an active rate vector)
+    An distribution of activation ratio on $V$
+        where $i$-th component is the average times that $i$ is activated in m iterations
+    An average utility distribution on $V$
+        where $i$-th component is the utility of $i$ times the activation ratio
+        (which is equal to the Hadamard product of the utilty distribution and an activation ratio ditribution)
     """
-    return ic_dist(seed, m, n, adj, S, prob_mat) * util_dist
+    return ic_infl_prop_exp(seed, m, n, adj, S, prob_mat) * util_dist
 
 
 @cc.export(
-    "ic_sigma",
+    "ic_infl_sprd",
     "f8(optional(i8), i8, i8, i8[:,:], i8[:], f8[:,:])",
 )
 @njit
-def ic_sigma(seed, m, n, adj, S, prob_mat):
+def ic_infl_sprd_exp(
+    seed: Optional[int],
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    S: np.ndarray,
+    prob_mat: np.ndarray,
+) -> np.number:
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
-    m : an iteration count of influence functions
+    seed : a seed value to initialize RNG unless None given
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array
+       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,
+       the indicator of $S$ is a $n$-dimentional binary vector where the $i$-th component equals 1 if $i \\in V$ otherwise 0.
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
 
     Returns
     -------
-    An average of the number of activated nodes
+    The average number of activated nodes
     """
-    return ic_dist(seed, m, n, adj, S, prob_mat).sum()
+    return ic_infl_prop_exp(seed, m, n, adj, S, prob_mat).sum()
 
 
 @cc.export(
-    "icu_sigma",
+    "ic_sw_sprd_exp",
     "f8(optional(i8), i8, i8, i8[:,:], i8[:], f8[:,:], f8[:])",
 )
 @njit
-def icu_sigma(seed, m, n, adj, S, prob_mat, util_dist):
+def ic_sw_sprd_exp(
+    seed: Optional[int],
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    S: np.ndarray,
+    prob_mat: np.ndarray,
+    util_dist: np.ndarray,
+) -> np.ndarray:
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
-    m : an iteration count of influence functions
+    seed : a seed value to initialize RNG unless None given
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    S : a seed set as an index vector (1d {0, 1} array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-    util_dist : an utility distribusion (1d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array
+       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,
+       the indicator of $S$ is a $n$-dimentional binary vector where the $i$-th component equals 1 if $i \\in V$ otherwise 0.
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+    util_dist : an utility distribusion on the indicator of $V$ as 1d float64 array
 
     Returns
     -------
-    An average of the sum of gained utilities
+    The average of social welfare ($E[\\sum_{i \\in V}u_i] = \\sum_{i \\in V}E[u_i]$)
     """
-    return icu_dist(seed, m, n, adj, S, prob_mat, util_dist).sum()
+    return ic_util_prop_exp(seed, m, n, adj, S, prob_mat, util_dist).sum()
 
 
 @cc.export("im_greedy", "(optional(i8), i8, i8, i8, i8[:,:], f8[:,:])")
 @njit
-def im_greedy(seed, k, m, n, adj, prob_mat):
+def im_greedy(
+    seed: Optional[int], k: int, m: int, n: int, adj: np.ndarray, prob_mat: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
-    k : the maximum size of seed node set
-    m : sampling size of influence functions
+    seed : a seed value to initialize RNG unless None given
+    k : the maximum size of seed node sets
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
 
     Returns
     -------
-    The tuple of an optimal seed set and the history of influence distribusions
+    The tuple of:
+      - an IM near optimal seed set
+      - the $k$-length list of 1d $n$-length vectors
+        where the $i$-th component of the $j$-th vector element is the influence average of a seed set $S_j \\cup \\{i\\}$
+        where $S_j$ is a near optimal $j$-size set
     """
 
     V = np.repeat(1, n)
@@ -204,34 +246,46 @@ def im_greedy(seed, k, m, n, adj, prob_mat):
             if W[i] != 0:
                 Su = S.copy()
                 Su[i] = 1
-                s_dist[i] = ic_sigma(seed, m, n, adj, Su, prob_mat)
+                s_dist[i] = ic_infl_sprd_exp(seed, m, n, adj, Su, prob_mat)
 
         S[s_dist.argmax()] = 1
         hist[j] = s_dist
 
-    return (S, hist)
+    return S, hist
 
 
 @cc.export(
-    "um_greedy",
+    "swm_greedy",
     "(optional(i8), i8, i8, i8, i8[:,:], f8[:,:], f8[:])",
 )
 @njit
-def um_greedy(seed, k, m, n, adj, prob_mat, util_dist):
+def swm_greedy(
+    seed: Optional[int],
+    k: int,
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    prob_mat: np.ndarray,
+    util_dist: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Parameters
     ----------
-    seed : a random seed set initially unless it is None
-    k : the maximum size of seed node set
-    m : sampling size of influence functions
+    seed : a seed value to initialize RNG unless None given
+    k : the maximum size of seed node sets
+    m : an iteration number of the IC model
     n : the number of nodes
-    adj : adjacency matrix of a grpah as numpy matrix (2d int64 array)
-    prob_mat : propagation probabilities as adjacency matrix form (2d float64 array)
-    util_dist : an utility distribusion (1d float64 array)
+    adj : the adjacency matrix of a graph as 2d int64 ndarray
+    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+    util_dist : an utility distribusion on the indicator of $V$ as 1d float64 array
 
     Returns
     -------
-    The tuple of an optimal seed set and the history of obtained utility distribusions
+    The tuple of:
+      - the indicator of an SWM near optimal seed set
+      - the $k$-length list of 1d $n$-length vectors
+        where the $i$-th component of the $j$-th vector element is the social welfare average of a seed set $S_j \\cup \\{i\\}$
+        where $S_j$ is a near optimal $j$-size set
     """
 
     V = np.repeat(1, n)
@@ -246,9 +300,9 @@ def um_greedy(seed, k, m, n, adj, prob_mat, util_dist):
             if W[i] != 0:
                 Su = S.copy()
                 Su[i] = 1
-                s_dist[i] = icu_sigma(seed, m, n, adj, Su, prob_mat, util_dist)
+                s_dist[i] = ic_sw_sprd_exp(seed, m, n, adj, Su, prob_mat, util_dist)
 
         S[s_dist.argmax()] = 1
         hist[j] = s_dist
 
-    return (S, hist)
+    return S, hist
