@@ -8,7 +8,7 @@ from timeit import timeit
 
 
 def get_adj(g):
-    adj = nx.to_numpy_matrix(g, nodelist=g.nodes(), weight=None, dtype=int)
+    adj = nx.to_numpy_array(g, nodelist=g.nodes(), weight=None, dtype=int)
 
     return adj
 
