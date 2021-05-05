@@ -1,0 +1,27 @@
+site_name: "diffusion tools"
+site_description: "Automatic documentation from sources, for MkDocs."
+site_url: "https://shinomi-lab.github.io/diffusion_tools"
+repo_url: "https://github.com/shinomi-lab/diffusion_tools"
+repo_name: "shinomi-lab/diffusion_tools"
+
+
+# docs_dir: "docs"
+theme:
+  name: "material"
+plugins:
+  - search
+  - mkdocstrings:
+      watch:
+        - difftools
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.snippets:
+      check_paths: true
+extra_javascript:
+  - javascripts/config.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

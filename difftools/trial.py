@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
 
 
-def __f(util_dist, k, m, n, adj, prob_mat, S) -> List[np.ndarray]:
+def __f(util_dist, k, m, n, adj, prob_mat, S) -> List[Any]:
     # util_dist = util_dists[i]
     # T, um_hist = dm.um_greedy(None, k, m, n, adj, prob_mat, util_dist)
     # Ts[i] = T
@@ -34,24 +34,22 @@ def trial_with_sample(
     util_dists: np.ndarray,
 ) -> Dict[str, np.ndarray]:
     """
-    Parameters
-    ----------
-    k : the maximum size of seed node sets
-    m : an iteration number of the IC model
-    n : the number of nodes
-    adj : the adjacency matrix of a graph as 2d int64 ndarray
-    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
-    util_dists : utility distribusion samples on the indicator of $V$ as 1d float64 array
+    Parameters:
+        k : the maximum size of seed node sets
+        m : an iteration number of the IC model
+        n : the number of nodes
+        adj : the adjacency matrix of a graph as 2d int64 ndarray
+        prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+        util_dists : utility distribusion samples on the indicator of $V$ as 1d float64 array
 
-    Returns
-    -------
-    The dictionary as:
-        `sw-ims`: a list of the social welfare by an IM opt seed set under the IC model
-        `sw-opts`: a list of the near maximums of social welfare for each utility distribution samples
-        `im-seed`: an opt-seed by influence maximization
-        `im-hist`: a history of influence maximization
-        `swm-seeds`: an opt-seed list by utility maximization
-        `swm-hists`: a list of a history of utility maximization
+    Returns:
+        The dictionary as:
+            - `sw-ims`: a list of the social welfare by an IM opt seed set under the IC model
+            - `sw-opts`: a list of the near maximums of social welfare for each utility distribution samples
+            - `im-seed`: an opt-seed by influence maximization
+            - `im-hist`: a history of influence maximization
+            - `swm-seeds`: an opt-seed list by utility maximization
+            - `swm-hists`: a list of a history of utility maximization
     """
     # l = len(util_dists)
     # Ts = np.zeros((l, n), dtype=np.int64)
@@ -84,25 +82,23 @@ def trial(
     prob_mat: np.ndarray,
 ) -> Dict[str, np.ndarray]:
     """
-    Parameters
-    ----------
-    l : the number of utility distribution samples
-    k : the maximum size of seed node sets
-    m : an iteration number of the IC model
-    n : the number of nodes
-    adj : the adjacency matrix of a graph as 2d int64 ndarray
-    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+    Parameters:
+        l : the number of utility distribution samples
+        k : the maximum size of seed node sets
+        m : an iteration number of the IC model
+        n : the number of nodes
+        adj : the adjacency matrix of a graph as 2d int64 ndarray
+        prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
 
-    Returns
-    -------
-    The dictionary as:
-        `sw-ims`: a list of the social welfare by an IM near opt seed set under the IC model
-        `sw-opts`: a list of the opt-maximal social welfare for each utility distribution samples
-        `im-seed`: an opt-seed by influence maximization
-        `im-hist`: a history of influence maximization
-        `swm-seeds`: an indicator list of SWM near optimal seed sets
-        `swm-hists`: a list of a history of SWM
-        `utils` : $l$-size uniform samples of utility distribusions on the indicator of $V$ as 1d float64 array
+    Returns:
+        The dictionary as:
+            - `sw-ims`: a list of the social welfare by an IM near opt seed set under the IC model
+            - `sw-opts`: a list of the opt-maximal social welfare for each utility distribution samples
+            - `im-seed`: an opt-seed by influence maximization
+            - `im-hist`: a history of influence maximization
+            - `swm-seeds`: an indicator list of SWM near optimal seed sets
+            - `swm-hists`: a list of a history of SWM
+            - `utils` : $l$-size uniform samples of utility distribusions on the indicator of $V$ as 1d float64 array
     """
     util_dists = np.zeros((l, n), dtype=np.float64)
     for i in range(l):

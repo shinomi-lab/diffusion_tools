@@ -1,0 +1,5 @@
+- [Top](index.md)
+- [difftools.algebra](algebra.md)
+- [difftools.diffusion](diffusion.md)
+- [difftools.maximization](maximization.md)
+- [difftools.trial](trial.md)
