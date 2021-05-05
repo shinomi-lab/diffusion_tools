@@ -44,12 +44,13 @@ def trial_with_sample(
 
     Returns:
         The dictionary as:
-            - `sw-ims`: a list of the social welfare by an IM opt seed set under the IC model
-            - `sw-opts`: a list of the near maximums of social welfare for each utility distribution samples
-            - `im-seed`: an opt-seed by influence maximization
-            - `im-hist`: a history of influence maximization
-            - `swm-seeds`: an opt-seed list by utility maximization
-            - `swm-hists`: a list of a history of utility maximization
+
+        - `sw-ims`: a list of the social welfare by an IM opt seed set under the IC model
+        - `sw-opts`: a list of the near maximums of social welfare for each utility distribution samples
+        - `im-seed`: an opt-seed by influence maximization
+        - `im-hist`: a history of influence maximization
+        - `swm-seeds`: an opt-seed list by utility maximization
+        - `swm-hists`: a list of a history of utility maximization
     """
     # l = len(util_dists)
     # Ts = np.zeros((l, n), dtype=np.int64)
@@ -92,13 +93,14 @@ def trial(
 
     Returns:
         The dictionary as:
-            - `sw-ims`: a list of the social welfare by an IM near opt seed set under the IC model
-            - `sw-opts`: a list of the opt-maximal social welfare for each utility distribution samples
-            - `im-seed`: an opt-seed by influence maximization
-            - `im-hist`: a history of influence maximization
-            - `swm-seeds`: an indicator list of SWM near optimal seed sets
-            - `swm-hists`: a list of a history of SWM
-            - `utils` : $l$-size uniform samples of utility distribusions on the indicator of $V$ as 1d float64 array
+
+        - `sw-ims`: a list of the social welfare by an IM near opt seed set under the IC model
+        - `sw-opts`: a list of the opt-maximal social welfare for each utility distribution samples
+        - `im-seed`: an opt-seed by influence maximization
+        - `im-hist`: a history of influence maximization
+        - `swm-seeds`: an indicator list of SWM near optimal seed sets
+        - `swm-hists`: a list of a history of SWM
+        - `utils` : $l$-size uniform samples of utility distribusions on the indicator of $V$ as 1d float64 array
     """
     util_dists = np.zeros((l, n), dtype=np.float64)
     for i in range(l):
