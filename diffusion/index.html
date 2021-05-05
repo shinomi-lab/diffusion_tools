@@ -1,0 +1,760 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Automatic documentation from sources, for MkDocs.">
+      
+      
+      
+      
+        <link rel="canonical" href="https://shinomi-lab.github.io/diffusion_tools/diffusion/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.3">
+    
+    
+      
+        <title>difftools.diffusion - diffusion tools</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e35208c4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#difftools.diffusion" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="diffusion tools" class="md-header__button md-logo" aria-label="diffusion tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            diffusion tools
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              difftools.diffusion
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/shinomi-lab/diffusion_tools/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    shinomi-lab/diffusion_tools
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="diffusion tools" class="md-nav__button md-logo" aria-label="diffusion tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    diffusion tools
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/shinomi-lab/diffusion_tools/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    shinomi-lab/diffusion_tools
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Top
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../algebra/" class="md-nav__link">
+        difftools.algebra
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-nav__icon md-icon"></span>
+          
+            <a href="./" class="md-nav__link md-nav__link--active"
+              style="margin: initial; padding: initial; pointer-events: initial">
+          
+            difftools.diffusion
+          </a>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        difftools.diffusion
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#difftools.diffusion" class="md-nav__link">
+    difftools.diffusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#difftools.diffusion.ic_adjmat" class="md-nav__link">
+    ic_adjmat()
+  </a>
+  
+    <nav class="md-nav" aria-label="ic_adjmat()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.ic_adjmat--parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.ic_adjmat--returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#difftools.diffusion.independent_cascade" class="md-nav__link">
+    independent_cascade()
+  </a>
+  
+    <nav class="md-nav" aria-label="independent_cascade()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.independent_cascade--parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.independent_cascade--returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../maximization/" class="md-nav__link">
+        difftools.maximization
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trial/" class="md-nav__link">
+        difftools.trial
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#difftools.diffusion" class="md-nav__link">
+    difftools.diffusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#difftools.diffusion.ic_adjmat" class="md-nav__link">
+    ic_adjmat()
+  </a>
+  
+    <nav class="md-nav" aria-label="ic_adjmat()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.ic_adjmat--parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.ic_adjmat--returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#difftools.diffusion.independent_cascade" class="md-nav__link">
+    independent_cascade()
+  </a>
+  
+    <nav class="md-nav" aria-label="independent_cascade()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.independent_cascade--parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#difftools.diffusion.independent_cascade--returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/shinomi-lab/diffusion_tools/edit/master/docs/diffusion.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  <h1>difftools.diffusion</h1>
+                
+                <div class="doc doc-object doc-module">
+
+<a id="difftools.diffusion"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="difftools.diffusion.ic_adjmat" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">ic_adjmat</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">prob_mat</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <h4 id="difftools.diffusion.ic_adjmat--parameters">Parameters</h4>
+<p>n : the number of nodes
+adj : the adjacency matrix of a graph as 2d int64 ndarray
+S : the indicator of a seed set (<span class="arithmatex">\({0,1}^n\)</span>) as 1d int64 array
+   Let <span class="arithmatex">\(V={1, ..., n}\)</span> and a seed set <span class="arithmatex">\(S \subseteq V\)</span>,
+   the indicator of <span class="arithmatex">\(S\)</span> is a <span class="arithmatex">\(n\)</span>-dimentional binary vector where the <span class="arithmatex">\(i\)</span>-th component equals 1 if <span class="arithmatex">\(i \in V\)</span> otherwise 0.
+prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray
+seed : a seed value to initialize RNG unless None given</p>
+<h4 id="difftools.diffusion.ic_adjmat--returns">Returns</h4>
+<p>The tuple of:
+    - the indicator of an activated node set
+    - the history of active node indicators
+    - the history of activated node indicators</p>
+
+        <details class="quote">
+          <summary>Source code in <code>difftools/diffusion.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@cc</span><span class="o">.</span><span class="n">export</span><span class="p">(</span>
+    <span class="s2">&quot;ic_adjmat&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;(i8, i8[:,:], i8[:], f8[:,:], optional(i8))&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nd">@njit</span>
+<span class="k">def</span> <span class="nf">ic_adjmat</span><span class="p">(</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">adj</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">prob_mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : the number of nodes</span>
+<span class="sd">    adj : the adjacency matrix of a graph as 2d int64 ndarray</span>
+<span class="sd">    S : the indicator of a seed set (${0,1}^n$) as 1d int64 array</span>
+<span class="sd">       Let $V={1, ..., n}$ and a seed set $S \\subseteq V$,</span>
+<span class="sd">       the indicator of $S$ is a $n$-dimentional binary vector where the $i$-th component equals 1 if $i \\in V$ otherwise 0.</span>
+<span class="sd">    prob_mat : propagation probabilities on the adjacency matrix as 2d float64 ndarray</span>
+<span class="sd">    seed : a seed value to initialize RNG unless None given</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The tuple of:</span>
+<span class="sd">        - the indicator of an activated node set</span>
+<span class="sd">        - the history of active node indicators</span>
+<span class="sd">        - the history of activated node indicators</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">I</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  <span class="c1"># active node group (currently activated)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  <span class="c1"># total active node group (activated)</span>
+
+    <span class="c1"># history</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="p">[(</span><span class="n">I</span><span class="p">,</span> <span class="n">T</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nrd</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># make a new active group with a current one</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  <span class="c1"># init a new active group</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">I</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># i is in a current active group</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">J</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># j is not active yet</span>
+                <span class="k">if</span> <span class="n">adj</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># j is a successor of i</span>
+                <span class="c1"># note: a_ij = 0 if and only if an edge (i, j) does not exist in a graph</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">prob_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">nrd</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                <span class="p">):</span>  <span class="c1"># j should not be activated if p = 0, and j should be acitvated if p = 1</span>
+                    <span class="c1"># activate j with a probability as prob_mat[i, j]</span>
+                    <span class="n">J</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># replace an active group to new one</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">J</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="c1"># add new active nodes to the total group</span>
+        <span class="c1"># note: for all j, J_j = 1 &amp; T_j = 0, so every component of T + I (= T + J) is at most 1</span>
+        <span class="n">T</span> <span class="o">+=</span> <span class="n">I</span>
+        <span class="n">hist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">I</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span>
+    <span class="n">Is</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hist</span><span class="p">):</span>
+        <span class="n">Is</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Ts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">Is</span><span class="p">,</span> <span class="n">Ts</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 id="difftools.diffusion.independent_cascade" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">independent_cascade</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">ep_map</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <h4 id="difftools.diffusion.independent_cascade--parameters">Parameters</h4>
+<p>g : networkx graph
+I0 : seed node set
+ep_map : propagation probability map
+gen : numpy random generator</p>
+<h4 id="difftools.diffusion.independent_cascade--returns">Returns</h4>
+<p>The history of tuple of active node set and activated node set</p>
+
+        <details class="quote">
+          <summary>Source code in <code>difftools/diffusion.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">independent_cascade</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">I0</span><span class="p">,</span> <span class="n">ep_map</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    g : networkx graph</span>
+<span class="sd">    I0 : seed node set</span>
+<span class="sd">    ep_map : propagation probability map</span>
+<span class="sd">    gen : numpy random generator</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The history of tuple of active node set and activated node set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">g</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">is_directed</span><span class="p">()</span> <span class="k">else</span> <span class="n">g</span><span class="o">.</span><span class="n">to_directed</span><span class="p">()</span>
+
+    <span class="c1"># gen = nrd.Generator(nrd.PCG64(nrd.SeedSequence(seed)))</span>
+
+    <span class="n">I</span> <span class="o">=</span> <span class="n">I0</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">ss</span> <span class="o">=</span> <span class="p">[(</span><span class="n">I</span><span class="p">,</span> <span class="n">S</span><span class="p">)]</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">I</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">ep_map</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span> <span class="o">&gt;</span> <span class="n">gen</span><span class="o">.</span><span class="n">random</span><span class="p">():</span>
+                    <span class="n">J</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="n">J</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">S</span> <span class="o">|</span> <span class="n">I</span>
+        <span class="n">ss</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">I</span><span class="p">,</span> <span class="n">S</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ss</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../algebra/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              difftools.algebra
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../maximization/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              difftools.maximization
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.4ea5477f.min.js"></script>
+      
+        <script src="../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
