@@ -481,7 +481,7 @@
       <td><p>The dictionary as:</p>
 <ul>
 <li><code>sw-ims</code>: a list of the social welfare by an IM near opt seed set under the IC model</li>
-<li><code>sw-opts</code>: a list of the opt-maximal social welfare for each utility distribution samples</li>
+<li><code>sw-swms</code>: a list of the opt-maximal social welfare for each utility distribution samples</li>
 <li><code>im-seed</code>: an opt-seed by influence maximization</li>
 <li><code>im-hist</code>: a history of influence maximization</li>
 <li><code>swm-seeds</code>: an indicator list of SWM near optimal seed sets</li>
@@ -514,7 +514,7 @@
 <span class="sd">        The dictionary as:</span>
 
 <span class="sd">        - `sw-ims`: a list of the social welfare by an IM near opt seed set under the IC model</span>
-<span class="sd">        - `sw-opts`: a list of the opt-maximal social welfare for each utility distribution samples</span>
+<span class="sd">        - `sw-swms`: a list of the opt-maximal social welfare for each utility distribution samples</span>
 <span class="sd">        - `im-seed`: an opt-seed by influence maximization</span>
 <span class="sd">        - `im-hist`: a history of influence maximization</span>
 <span class="sd">        - `swm-seeds`: an indicator list of SWM near optimal seed sets</span>
@@ -613,7 +613,7 @@
       <td><p>The dictionary as:</p>
 <ul>
 <li><code>sw-ims</code>: a list of the social welfare by an IM opt seed set under the IC model</li>
-<li><code>sw-opts</code>: a list of the near maximums of social welfare for each utility distribution samples</li>
+<li><code>sw-swms</code>: a list of the near maximums of social welfare for each utility distribution samples</li>
 <li><code>im-seed</code>: an opt-seed by influence maximization</li>
 <li><code>im-hist</code>: a history of influence maximization</li>
 <li><code>swm-seeds</code>: an opt-seed list by utility maximization</li>
@@ -645,17 +645,12 @@
 <span class="sd">        The dictionary as:</span>
 
 <span class="sd">        - `sw-ims`: a list of the social welfare by an IM opt seed set under the IC model</span>
-<span class="sd">        - `sw-opts`: a list of the near maximums of social welfare for each utility distribution samples</span>
+<span class="sd">        - `sw-swms`: a list of the near maximums of social welfare for each utility distribution samples</span>
 <span class="sd">        - `im-seed`: an opt-seed by influence maximization</span>
 <span class="sd">        - `im-hist`: a history of influence maximization</span>
 <span class="sd">        - `swm-seeds`: an opt-seed list by utility maximization</span>
 <span class="sd">        - `swm-hists`: a list of a history of utility maximization</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># l = len(util_dists)</span>
-    <span class="c1"># Ts = np.zeros((l, n), dtype=np.int64)</span>
-    <span class="c1"># um_hists = np.zeros((l, k, n))</span>
-    <span class="c1"># total_utils = np.zeros(l)</span>
-    <span class="c1"># max_utils = np.zeros(l)</span>
 
     <span class="n">S</span><span class="p">,</span> <span class="n">im_hist</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">im_greedy</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">prob_mat</span><span class="p">)</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)(</span>
@@ -665,7 +660,7 @@
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;sw-ims&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-        <span class="s2">&quot;sw-opts&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+        <span class="s2">&quot;sw-swms&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
         <span class="s2">&quot;im-seed&quot;</span><span class="p">:</span> <span class="n">S</span><span class="p">,</span>
         <span class="s2">&quot;im-hist&quot;</span><span class="p">:</span> <span class="n">im_hist</span><span class="p">,</span>
         <span class="s2">&quot;swm-seeds&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
