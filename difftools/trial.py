@@ -10,19 +10,14 @@ import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
 
 
-def __f(util_dist, k, m, n, adj, prob_mat, S) -> List[Any]:
-    # util_dist = util_dists[i]
-    # T, um_hist = dm.um_greedy(None, k, m, n, adj, prob_mat, util_dist)
-    # Ts[i] = T
-    # um_hists[i] = um_hist
-    # total_utils[i] = dm.icu_sigma(None, m, n, adj, S, prob_mat, util_dist)
-    # max_utils[i] = dm.icu_sigma(None, m, n, adj, T, prob_mat, util_dist)
-
+def __f(
+    util_dist, k, m, n, adj, prob_mat, S
+) -> Tuple[np.ndarray, np.ndarray, np.number, np.number]:
     T, swm_hist = dm.swm_greedy(None, k, m, n, adj, prob_mat, util_dist)
-    sw_ic = dm.ic_sw_sprd_exp(None, m, n, adj, S, prob_mat, util_dist)
-    sw_opt = dm.ic_sw_sprd_exp(None, m, n, adj, T, prob_mat, util_dist)
+    sw_im = dm.ic_sw_sprd_exp(None, m, n, adj, S, prob_mat, util_dist)
+    sw_swm = dm.ic_sw_sprd_exp(None, m, n, adj, T, prob_mat, util_dist)
 
-    return [T, swm_hist, sw_ic, sw_opt]
+    return T, swm_hist, sw_im, sw_swm
 
 
 def trial_with_sample(
@@ -46,17 +41,12 @@ def trial_with_sample(
         The dictionary as:
 
         - `sw-ims`: a list of the social welfare by an IM opt seed set under the IC model
-        - `sw-opts`: a list of the near maximums of social welfare for each utility distribution samples
+        - `sw-swms`: a list of the near maximums of social welfare for each utility distribution samples
         - `im-seed`: an opt-seed by influence maximization
         - `im-hist`: a history of influence maximization
         - `swm-seeds`: an opt-seed list by utility maximization
         - `swm-hists`: a list of a history of utility maximization
     """
-    # l = len(util_dists)
-    # Ts = np.zeros((l, n), dtype=np.int64)
-    # um_hists = np.zeros((l, k, n))
-    # total_utils = np.zeros(l)
-    # max_utils = np.zeros(l)
 
     S, im_hist = dm.im_greedy(None, k, m, n, adj, prob_mat)
     ret = Parallel(n_jobs=-1)(
@@ -66,7 +56,7 @@ def trial_with_sample(
 
     return {
         "sw-ims": np.stack(ret[2]),
-        "sw-opts": np.stack(ret[3]),
+        "sw-swms": np.stack(ret[3]),
         "im-seed": S,
         "im-hist": im_hist,
         "swm-seeds": np.stack(ret[0]),
@@ -95,7 +85,7 @@ def trial(
         The dictionary as:
 
         - `sw-ims`: a list of the social welfare by an IM near opt seed set under the IC model
-        - `sw-opts`: a list of the opt-maximal social welfare for each utility distribution samples
+        - `sw-swms`: a list of the opt-maximal social welfare for each utility distribution samples
         - `im-seed`: an opt-seed by influence maximization
         - `im-hist`: a history of influence maximization
         - `swm-seeds`: an indicator list of SWM near optimal seed sets

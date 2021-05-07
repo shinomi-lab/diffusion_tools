@@ -5,7 +5,6 @@ repo_url: "https://github.com/shinomi-lab/diffusion_tools"
 repo_name: "shinomi-lab/diffusion_tools"
 
 
-# docs_dir: "docs"
 theme:
   name: "material"
 plugins:
