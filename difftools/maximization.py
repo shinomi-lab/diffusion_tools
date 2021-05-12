@@ -4,7 +4,6 @@ import difftools.algebra as da
 
 import numpy as np
 import numpy.random as nrd
-import numpy.typing as npt
 
 import numba
 from numba import njit

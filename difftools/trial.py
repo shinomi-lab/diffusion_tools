@@ -1,13 +1,11 @@
-from typing import Tuple, Any, Set, List, Dict
+from typing import Tuple, Dict
 import difftools.maximization as dm
 import difftools.algebra as da
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from joblib import Parallel, delayed
 
-import numba
 from numba import njit
 from numba.pycc import CC
 
@@ -132,23 +130,3 @@ def trial(
     ret["utils"] = util_dists
 
     return ret
-
-
-def plot_samples(total_utils, max_utils):
-    fig = plt.figure(dpi=100)
-    fig.patch.set_facecolor("white")
-
-    x_max = max_utils.max() + 0.02
-    x_min = max_utils.min() - 0.02
-
-    ax = fig.add_subplot(111)
-    ax.scatter(total_utils, max_utils, s=10, label="utility sample")
-
-    x = np.linspace(x_min, x_max, 100)
-    ax.plot(x, x, c="r", linewidth=0.5, label="$y=x$")
-
-    ax.set_xlabel("Total Utility of Optimal Max Influence Range")
-    ax.set_ylabel("Optimal Max Utility")
-    ax.set_aspect("equal")
-    ax.legend(loc="lower right")
-    plt.show()
