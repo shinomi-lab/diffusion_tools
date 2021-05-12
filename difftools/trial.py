@@ -5,9 +5,41 @@ import difftools.algebra as da
 import numpy as np
 import matplotlib.pyplot as plt
 
-# import numba
-
 from joblib import Parallel, delayed
+
+import numba
+from numba import njit
+from numba.pycc import CC
+
+cc = CC("trial")
+
+
+@cc.export("trial_with_sample_jit", "(i8, i8, i8, i8[:,:], f8[:,:], f8[:,:])")
+@njit
+def trial_with_sample_jit(
+    k: int,
+    m: int,
+    n: int,
+    adj: np.ndarray,
+    prob_mat: np.ndarray,
+    util_dists: np.ndarray,
+) -> Tuple[np.ndarray, ...]:
+    S, _ = dm.im_greedy(None, k, m, n, adj, prob_mat)
+    l = len(util_dists)
+    Ts = np.zeros((l, n), np.float64)
+    sw_ims = np.zeros(l, np.float64)
+    sw_swms = np.zeros(l, np.float64)
+
+    for i in range(l):
+        util_dist = util_dists[i]
+        T, _ = dm.swm_greedy(None, k, m, n, adj, prob_mat, util_dist)
+        sw_im = dm.ic_sw_sprd_exp(None, m, n, adj, S, prob_mat, util_dist)
+        sw_swm = dm.ic_sw_sprd_exp(None, m, n, adj, T, prob_mat, util_dist)
+        Ts[i] = T
+        sw_ims[i] = sw_im
+        sw_swms[i] = sw_swm
+
+    return sw_ims, sw_swms, S, Ts
 
 
 def __f(

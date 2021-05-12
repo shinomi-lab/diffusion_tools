@@ -57,10 +57,14 @@ def test():
     # print(timeit(lambda: dm.icu_dist(0, 100, n, adj, S, prob_mat, util_dist), number=1))
     # print(timeit(lambda: dm.im_greedy_jit(0, 2, 100, n, adj, prob_mat), number=1))
     # print(dm.um_greedy(0, 2, 100, n, adj, prob_mat, util_dist))
+    l = 100
+    util_dists = np.zeros((l, n), dtype=np.float64)
+    for i in range(l):
+        util_dists[i] = da.random_simplex(None, n)
     print(
         timeit(
-            lambda: (lambda r: print(r["sw-ims"], "\n", r["sw-opts"]))(
-                dt.trial(10, 2, 1000, n, adj, prob_mat)
+            lambda: print(
+                dt.trial_with_sample_jit(1, 1000, n, adj, prob_mat, util_dists)
             ),
             number=1,
         )

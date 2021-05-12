@@ -1,6 +1,7 @@
 import difftools.algebra
 import difftools.diffusion
 import difftools.maximization
+import difftools.trial
 
 from typing import Any, Dict
 
@@ -10,6 +11,7 @@ ext_modules = [
         difftools.algebra.cc,
         difftools.diffusion.cc,
         difftools.maximization.cc,
+        difftools.trial.cc,
     ]
 ]
 
