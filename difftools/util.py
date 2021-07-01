@@ -18,3 +18,8 @@ def load_obj(dump_path, name):
     with open(Path(dump_path, name), mode="rb") as f:
         obj = pickle.load(f)
     return obj
+
+
+def get_gen(seed):
+    sq = nrd.SeedSequence(seed)
+    return nrd.Generator(nrd.PCG64(sq))

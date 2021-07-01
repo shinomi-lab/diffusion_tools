@@ -1,5 +1,5 @@
 from typing import Tuple, Any, Set, List, Optional
-import difftools.diffusion as dd
+import difftools.diffusion.ic as ddi
 import difftools.algebra as da
 
 import numpy as np
@@ -30,7 +30,7 @@ def ic_infl_prop(
     Returns:
         the indicator of an activated node set
     """
-    return dd.ic_adjmat(n, adj, S, prob_mat, seed)[0]
+    return ddi.ic_adjmat(n, adj, S, prob_mat, seed)[0]
 
 
 @cc.export(
@@ -61,7 +61,7 @@ def ic_util_prop(
         the utility distribution on the indicator of an activated node set
         where $i$-th component equals the utility of $i$ if $i$ is activated otherwise 0
     """
-    d = dd.ic_adjmat(n, adj, S, prob_mat, seed)[0]
+    d = ddi.ic_adjmat(n, adj, S, prob_mat, seed)[0]
     return d * util_dist
 
 
