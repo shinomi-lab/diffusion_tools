@@ -1,31 +1,31 @@
 [tool.poetry]
-name = "diffusion_tools"
-version = "0.2.3a"
-description = ""
 authors = ["Shinomiya-Lab <lab.shinomiya@outlook.com>"]
-packages = [
-    { include = "difftools" },
-]
 build = "build.py"
+description = ""
+name = "diffusion_tools"
+packages = [
+  {include = "difftools"},
+]
+version = "0.2.4"
 
 [tool.poetry.dependencies]
-python = ">=3.8 <=3.9"
-numpy = "1.21"
-networkx = "*"
-matplotlib = "*"
-scipy = "*"
-joblib = "*"
-numba = "*"
 fire = "^0.4.0"
+joblib = "*"
+matplotlib = "*"
+networkx = "*"
+numba = "*"
+numpy = "1.21"
+python = ">=3.8 <=3.9"
+scipy = "*"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^20.8b1", allow-prereleases = true}
-mkdocstrings = "^0.15.0"
-mkdocs-material = "^7.1.3"
 mkdocs-literate-nav = "^0.3.1"
+mkdocs-material = "^7.1.3"
 mkdocs-section-index = "^0.3.0"
+mkdocstrings = "^0.15.0"
 pytest = "^6.2.4"
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "setuptools", "numpy", "networkx", "numba", "joblib"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "setuptools", "numpy", "networkx", "numba", "joblib"]
