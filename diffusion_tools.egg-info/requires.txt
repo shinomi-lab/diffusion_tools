@@ -1,0 +1,6 @@
+joblib
+matplotlib
+networkx
+numba
+numpy
+scipy

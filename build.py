@@ -1,5 +1,6 @@
 import difftools.algebra
-import difftools.diffusion
+import difftools.diffusion.ic
+import difftools.diffusion.multi
 import difftools.maximization
 import difftools.trial
 
@@ -9,7 +10,8 @@ ext_modules = [
     cc.distutils_extension()
     for cc in [
         difftools.algebra.cc,
-        difftools.diffusion.cc,
+        difftools.diffusion.ic.cc,
+        difftools.diffusion.multi._jit.cc,
         difftools.maximization.cc,
         difftools.trial.cc,
     ]
