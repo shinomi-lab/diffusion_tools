@@ -1,6 +1,8 @@
+from typing import Optional
 import matplotlib.pyplot as plt
 from pathlib import Path
 import pickle
+import numpy.random as nrd
 
 
 def set_color_map(cmap_name, n, ax):
@@ -20,6 +22,5 @@ def load_obj(dump_path, name):
     return obj
 
 
-def get_gen(seed):
-    sq = nrd.SeedSequence(seed)
-    return nrd.Generator(nrd.PCG64(sq))
+def get_gen(seed: Optional[int]) -> nrd.Generator:
+    return nrd.PCG64(seed)
